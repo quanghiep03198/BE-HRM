@@ -1,8 +1,11 @@
-import { Module } from '@nestjs/common'
-import { MailerOptions, MailerModule as NestMailerModule } from '@nestjs-modules/mailer'
-import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter'
-import { ConfigModule, ConfigService } from '@nestjs/config'
-import path from 'path'
+import { Module } from '@nestjs/common';
+import {
+	MailerOptions,
+	MailerModule as NestMailerModule
+} from '@nestjs-modules/mailer';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import path from 'path';
 
 @Module({
 	imports: [
@@ -32,7 +35,7 @@ import path from 'path'
 							strict: true
 						}
 					}
-				}
+				};
 			}
 		})
 	]

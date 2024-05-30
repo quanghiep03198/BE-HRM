@@ -1,24 +1,34 @@
-
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common'
-import { HttpAdapterHost, Reflector } from '@nestjs/core'
-import { Observable } from 'rxjs'
-import { map } from 'rxjs/operators'
-import { ResponseMessageKey } from '../decorators/response-message.decorator'
+import {
+	CallHandler,
+	ExecutionContext,
+	Injectable,
+	NestInterceptor
+} from '@nestjs/common';
+import { HttpAdapterHost, Reflector } from '@nestjs/core';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { ResponseMessageKey } from '../decorators/response-message.decorator';
 
 export interface Response<T> {
-	data: T
+	data: T;
 }
 
 @Injectable()
-export class TransformInterceptor<T> implements NestInterceptor<T, Response<T>> {
+export class TransformInterceptor<T>
+	implements NestInterceptor<T, Response<T>>
+{
 	constructor(
 		private reflector: Reflector,
 		private readonly httpAdapterHost: HttpAdapterHost
 	) {}
-	intercept(context: ExecutionContext, next: CallHandler): Observable<Response<T>> {
+	intercept(
+		context: ExecutionContext,
+		next: CallHandler
+	): Observable<Response<T>> {
 		const responseMessage =
-			this.reflector.get<string>(ResponseMessageKey, context.getHandler()) ?? ''
-		const { httpAdapter } = this.httpAdapterHost
+			this.reflector.get<string>(ResponseMessageKey, context.getHandler()) ??
+			'';
+		const { httpAdapter } = this.httpAdapterHost;
 		return next.handle().pipe(
 			map((data) => ({
 				data,
@@ -27,6 +37,6 @@ export class TransformInterceptor<T> implements NestInterceptor<T, Response<T>> 
 				timestamp: new Date().toISOString(),
 				path: httpAdapter.getRequestUrl(context.switchToHttp().getRequest())
 			}))
-		)
+		);
 	}
 }

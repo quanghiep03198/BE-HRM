@@ -1,5 +1,5 @@
 export interface IRevokedToken {
-    id: number,
-    username: string,
-    revokedToken: string
+	id: number;
+	username: string;
+	revokedToken: string;
 }
