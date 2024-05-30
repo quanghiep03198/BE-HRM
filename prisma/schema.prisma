@@ -1,0 +1,83 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "sqlserver"
+    url      = env("DATABASE_URL")
+}
+
+model User {
+    id         Int       @id @default(autoincrement())
+    username   String    @unique @db.VarChar(20)
+    password   String    @db.VarChar(16)
+    picture    String?   @db.VarChar(255)
+    role       String    @db.VarChar(10)
+    employeeId Int       @unique
+    employee   Employee? @relation(fields: [employeeId], references: [id])
+    createdAt  DateTime  @default(now())
+    updatedAt  DateTime  @updatedAt
+
+    @@unique([username, employeeId])
+}
+
+model RevokedToken {
+    id           Int    @id @default(autoincrement())
+    username     String
+    revokedToken String @db.VarChar(255)
+
+    @@index([username, revokedToken])
+}
+
+model Employee {
+    id                    Int      @id @default(autoincrement())
+    fullName              String   @db.NVarChar(100)
+    gender                String   @db.NVarChar(10)
+    dateOfBirth           DateTime
+    birthPlace            String   @db.NVarChar(100)
+    permanentAddress      String   @db.NVarChar(100)
+    mariageStatus         String   @db.VarChar(10)
+    identityNumber        String   @db.VarChar(20)
+    email                 String   @db.NVarChar(10)
+    phoneNumber           String   @db.NVarChar(10)
+    highestEducationLevel String   @db.VarChar(100)
+    graduatedSchool       String   @db.VarChar(100)
+    cardId                String   @db.VarChar(50)
+    positionCode          String   @db.VarChar(50)
+    departmentCode        String   @db.VarChar(50)
+    fingerprintCode       String?  @db.VarChar(50)
+    user                  User?
+    userId                Int?
+    createdAt             DateTime @default(now())
+    updatedAt             DateTime @updatedAt
+
+    @@unique([identityNumber, phoneNumber, email, cardId])
+    @@index([fullName, email, phoneNumber, cardId, departmentCode])
+}
+
+model Positions {
+    id           Int    @id @default(autoincrement())
+    positionName String @db.NVarChar(100)
+    positionCode String @unique @db.NVarChar(100)
+}
+
+model Departments {
+    id                   Int      @id @default(autoincrement())
+    departmentCode       String   @unique @db.VarChar(50)
+    departmentName       String   @db.NVarChar(100)
+    parentDepartmentCode String   @db.VarChar(50)
+    factoryCode          String   @db.VarChar(50)
+    createdAt            DateTime @default(now())
+    updatedAt            DateTime @updatedAt
+}
+
+model Factor {
+    id          Int      @id @default(autoincrement())
+    factoryCode String   @db.VarChar(10)
+    factoryName String   @db.NVarChar(100)
+    address     String   @db.NVarChar(255)
+    telephone   String   @db.VarChar(20)
+    faxNumber   String   @db.VarChar(20)
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+}
