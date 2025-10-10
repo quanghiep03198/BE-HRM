@@ -1,28 +1,26 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
-import { CqrsModule } from '@nestjs/cqrs'
-import { TRPCModule } from 'nestjs-trpc'
-import { AppController } from './app.controller'
-import { AppService } from './app.service'
-import { appConfigFactory } from './configs/app.config'
-import { validateConfigAsync } from './configs/app.config.validation'
-import { ExampleModule } from './example/example.module'
+import { cacheConfigFactory } from './configs/cache.config'
+import { validateConfigAsync } from './configs/configs.validation'
+import { i18nConfigFactory } from './configs/i18n.config'
+import { typeOrmConfigFactory } from './configs/typeorm.config'
+import { DatabaseModule } from './databases'
+import { EmployeeModule } from './example/employee.module'
+import { TrpcModule } from './trpc/trpc.module'
 
 @Module({
 	imports: [
 		ConfigModule.forRoot({
 			isGlobal: true,
 			envFilePath: '.env',
-			load: [appConfigFactory],
+			load: [typeOrmConfigFactory, i18nConfigFactory, cacheConfigFactory],
 			validate: validateConfigAsync
 		}),
-		TRPCModule.forRoot({
-			autoSchemaFile: 'src/trpc'
-		}),
-		CqrsModule.forRoot(),
-		ExampleModule
+		TrpcModule,
+		DatabaseModule,
+		EmployeeModule
 	],
-	controllers: [AppController],
-	providers: [AppService]
+	controllers: [],
+	providers: []
 })
 export class AppModule {}

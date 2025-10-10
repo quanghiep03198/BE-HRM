@@ -5,7 +5,7 @@ import { isIP } from 'node:net'
 import { join } from 'node:path'
 import { DataSource, DataSourceOptions } from 'typeorm'
 import { type SeederOptions } from 'typeorm-extension'
-import { DATABASE_SCHEMA } from './constants'
+import { DATABASE_SCHEMA, DATABASE_SYSCLOUD } from './constants'
 
 const logger = new Logger('TypeORM')
 
@@ -27,10 +27,11 @@ export default new DataSource({
 	type: env('DB_TYPE'),
 	username: env('DB_USERNAME'),
 	password: env('DB_PASSWORD'),
-	database: 'master',
+	database: DATABASE_SYSCLOUD,
 	schema: DATABASE_SCHEMA,
 	entities: [join(__dirname, '../**/*.entity.{ts,js}'), join(__dirname, './**/*.entity.{ts,js}')],
 	migrations: [join(__dirname, './migrations/*.{ts,js}')],
+	subscribers: [join(__dirname, '../**/*.entity.subscriber.{ts,js}')],
 	migrationsTableName: 'migrations',
 	seeds: [join(__dirname, './seeds/**/*.seeder.{ts,js}')],
 	logging: true,

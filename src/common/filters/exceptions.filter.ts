@@ -1,13 +1,13 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common'
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Logger } from '@nestjs/common'
 import { HttpAdapterHost } from '@nestjs/core'
-import { SentryExceptionCaptured } from '@sentry/nestjs'
-import { PinoLogger } from 'nestjs-pino'
+// import { SentryExceptionCaptured } from '@sentry/nestjs'
+// import { PinoLogger } from 'nestjs-pino'
 import { IResponseBody } from '../helpers/transform-response.helper'
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
 	constructor(
-		private readonly logger: PinoLogger,
+		private readonly logger: Logger,
 		private readonly httpAdapterHost: HttpAdapterHost
 	) {}
 
@@ -16,7 +16,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 	 * @param {HttpException | Error} exception
 	 * @param {ArgumentsHost} host
 	 */
-	@SentryExceptionCaptured()
+	// @SentryExceptionCaptured()
 	catch(exception: HttpException | Error, host: ArgumentsHost): void {
 		const { httpAdapter } = this.httpAdapterHost
 		const ctx = host.switchToHttp()

@@ -1,21 +1,36 @@
 {
-  "compilerOptions": {
-    "module": "commonjs",
-    "declaration": true,
-    "removeComments": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "target": "ES2021",
-    "sourceMap": true,
-    "outDir": "./dist",
-    "baseUrl": "./",
-    "incremental": true,
-    "skipLibCheck": true,
-    "strictNullChecks": false,
-    "noImplicitAny": false,
-    "strictBindCallApply": false,
-    "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
-  }
+	"compilerOptions": {
+		"module": "NodeNext",
+		"moduleResolution": "nodenext",
+		"declaration": true,
+		"removeComments": true,
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"allowSyntheticDefaultImports": true,
+		"lib": ["ESNext"],
+		"target": "es2021",
+		"sourceMap": true,
+		"outDir": "./dist",
+		"incremental": true,
+		/* Strict mode */
+		/* Most of strict mode options are disabled because of slow startup */
+		"strict": true,
+		"noUnusedParameters": false,
+		"noUnusedLocals": false,
+		"skipLibCheck": false,
+		"strictNullChecks": false,
+		"noImplicitAny": false,
+		"strictBindCallApply": false,
+		"forceConsistentCasingInFileNames": false,
+		"noFallthroughCasesInSwitch": false,
+		/* Path alias */
+		"baseUrl": "./",
+		"paths": {
+			"@/*": ["src/*"]
+		},
+		"inlineSources": true,
+		"sourceRoot": "/"
+	},
+	"include": ["src/**/*.ts", "test"],
+	"exclude": ["node_modules"]
 }

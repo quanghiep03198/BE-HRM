@@ -1,33 +1,14 @@
-import { Logger, PinoLogger } from 'nestjs-pino'
+import { Logger } from '@nestjs/common'
 import { runSeeders } from 'typeorm-extension'
 import dataSource from './data-source'
-import { DefectiveGoodsSeeder } from './seeds/defective-goods.seeder'
+import { EmployeeSeeder1760158722130 } from './seeds/1760158722130-employee.seeder'
 
 const bootstrap = async () => {
-	const logger = new Logger(
-		new PinoLogger({
-			renameContext: 'Seeding',
-			pinoHttp: {
-				name: 'Seeding',
-				transport: {
-					targets: [
-						{
-							target: 'pino-pretty',
-							level: 'info',
-							options: {
-								translateTime: 'SYS:yyyy-mm-dd HH:MM:ss.l'
-							}
-						}
-					]
-				}
-			}
-		}),
-		{ renameContext: 'Seeding' }
-	)
+	const logger = new Logger('Seeder')
 	try {
 		logger.log('Running seeders...')
 		await dataSource.initialize()
-		await runSeeders(dataSource, { seeds: [DefectiveGoodsSeeder] })
+		await runSeeders(dataSource, { seeds: [EmployeeSeeder1760158722130] })
 		logger.log('Seeders executed successfully')
 	} catch (error) {
 		logger.error(error)

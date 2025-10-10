@@ -12,34 +12,10 @@ import { DATA_SOURCE_SYSCLOUD, DATABASE_SYSCLOUD } from './constants'
 			useFactory: (configService: ConfigService) => {
 				return {
 					database: DATABASE_SYSCLOUD,
-					...configService.getOrThrow<TypeOrmModuleAsyncOptions>('mssql')
+					...configService.get<TypeOrmModuleAsyncOptions>('typeorm')
 				}
 			}
 		})
 	]
 })
-export class DatabaseModule {
-	// static forRootAsync(): DynamicModule {
-	// 	return {
-	// 		module: DatabaseModule,
-	// 		global: true,
-	// 		providers: [
-	// 			{
-	// 				provide: CENTRAL_DATA_SOURCE,
-	// 				scope: Scope.DEFAULT,
-	// 				inject: [ConfigService],
-	// 				useFactory: async (configService: ConfigService) => {
-	// 					const dataSource = new DataSource({
-	// 						...configService.getOrThrow<SqlServerConnectionOptions>('mssql'),
-	// 						host: configService.getOrThrow<string>('TENANT_CENTRAL'),
-	// 						entities: [join(__dirname, '../**/*.entity.{ts,js}')]
-	// 					})
-	// 					if (!dataSource.isInitialized) await dataSource.initialize()
-	// 					return dataSource
-	// 				}
-	// 			}
-	// 		],
-	// 		exports: [CENTRAL_DATA_SOURCE]
-	// 	}
-	// }
-}
+export class DatabaseModule {}
