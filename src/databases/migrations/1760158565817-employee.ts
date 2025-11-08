@@ -1,11 +1,22 @@
-import { MigrationInterface, QueryRunner, Table, TableIndex } from 'typeorm'
-import { BaseAbstractEntity } from '../base/base.entity.abstract'
+import { BaseAbstractEntity } from '@/modules/_base/base.abstract.entity'
+import { MigrationInterface, QueryRunner, Table, TableForeignKey, TableIndex } from 'typeorm'
+import { DATABASE_SCHEMA, DATABASE_SYSCLOUD } from '../constants'
 
 export class Employee1760158565817 implements MigrationInterface {
 	private readonly table = new Table({
+		database: DATABASE_SYSCLOUD,
+		schema: DATABASE_SCHEMA,
 		name: 'sc_employees',
 		columns: [
 			...BaseAbstractEntity.BASE_COLUMNS,
+			// User reference (OneToOne relationship)
+			{
+				name: 'user_id',
+				type: 'int',
+				isNullable: true,
+				isUnique: true,
+				comment: 'ID tài khoản đăng nhập (nếu có)'
+			},
 			// Thông tin cơ bản
 			{
 				name: 'employee_code',
@@ -174,7 +185,7 @@ export class Employee1760158565817 implements MigrationInterface {
 
 		// Tạo các indices
 		await queryRunner.createIndex(
-			'sc_employees',
+			this.table,
 			new TableIndex({
 				name: 'IDX_sc_employees_employee_code',
 				columnNames: ['employee_code'],
@@ -183,7 +194,7 @@ export class Employee1760158565817 implements MigrationInterface {
 		)
 
 		await queryRunner.createIndex(
-			'sc_employees',
+			this.table,
 			new TableIndex({
 				name: 'IDX_sc_employees_email',
 				columnNames: ['email'],
@@ -192,7 +203,7 @@ export class Employee1760158565817 implements MigrationInterface {
 		)
 
 		await queryRunner.createIndex(
-			'sc_employees',
+			this.table,
 			new TableIndex({
 				name: 'IDX_sc_employees_phone',
 				columnNames: ['phone']
@@ -200,7 +211,7 @@ export class Employee1760158565817 implements MigrationInterface {
 		)
 
 		await queryRunner.createIndex(
-			'sc_employees',
+			this.table,
 			new TableIndex({
 				name: 'IDX_sc_employees_department_id',
 				columnNames: ['department_id']
@@ -208,7 +219,7 @@ export class Employee1760158565817 implements MigrationInterface {
 		)
 
 		await queryRunner.createIndex(
-			'sc_employees',
+			this.table,
 			new TableIndex({
 				name: 'IDX_sc_employees_position_id',
 				columnNames: ['position_id']
@@ -216,22 +227,80 @@ export class Employee1760158565817 implements MigrationInterface {
 		)
 
 		await queryRunner.createIndex(
-			'sc_employees',
+			this.table,
 			new TableIndex({
 				name: 'IDX_sc_employees_status',
 				columnNames: ['status']
 			})
 		)
+
+		await queryRunner.createIndex(
+			this.table,
+			new TableIndex({
+				name: 'IDX_sc_employees_user_id',
+				columnNames: ['user_id'],
+				isUnique: true
+			})
+		)
+
+		// Add foreign keys after all tables are created
+		// Note: FK to users, departments, positions will be added via raw SQL after table creation
+		const [userTable, departmentTable, positionTable] = await queryRunner.getTables([
+			'sc_users',
+			'sc_departments',
+			'sc_positions'
+		])
+
+		if (userTable)
+			await queryRunner.createForeignKey(
+				this.table,
+				new TableForeignKey({
+					name: 'FK_EMPLOYEE_USER',
+					columnNames: ['user_id'],
+					referencedTableName: 'sc_users',
+					referencedColumnNames: ['id'],
+					onDelete: 'NO ACTION',
+					onUpdate: 'NO ACTION'
+				})
+			)
+		if (departmentTable)
+			await queryRunner.createForeignKey(
+				this.table,
+				new TableForeignKey({
+					name: 'FK_EMPLOYEE_DEPARTMENT',
+					columnNames: ['department_id'],
+					referencedTableName: 'sc_departments',
+					referencedColumnNames: ['id'],
+					onDelete: 'NO ACTION',
+					onUpdate: 'NO ACTION'
+				})
+			)
+		if (positionTable)
+			await queryRunner.createForeignKey(
+				this.table,
+				new TableForeignKey({
+					name: 'FK_EMPLOYEE_POSITION',
+					columnNames: ['position_id'],
+					referencedTableName: 'sc_positions',
+					referencedColumnNames: ['id'],
+					onDelete: 'NO ACTION',
+					onUpdate: 'NO ACTION'
+				})
+			)
 	}
 
 	public async down(queryRunner: QueryRunner): Promise<void> {
-		// Xóa các indices trước
-		await queryRunner.dropIndex('sc_employees', 'IDX_sc_employees_employee_code')
-		await queryRunner.dropIndex('sc_employees', 'IDX_sc_employees_email')
-		await queryRunner.dropIndex('sc_employees', 'IDX_sc_employees_phone')
-		await queryRunner.dropIndex('sc_employees', 'IDX_sc_employees_department_id')
-		await queryRunner.dropIndex('sc_employees', 'IDX_sc_employees_position_id')
-		await queryRunner.dropIndex('sc_employees', 'IDX_sc_employees_status')
+		// * Drop all indexes and foreign keys if exist first
+		const table = await queryRunner.getTable(this.table.name)
+		if (table) {
+			for (const fk of table.foreignKeys) {
+				await queryRunner.dropForeignKey(this.table, fk)
+			}
+			// Drop all indices if exist
+			for (const idx of table.indices) {
+				await queryRunner.dropIndex(this.table, idx)
+			}
+		}
 
 		// Xóa table
 		await queryRunner.dropTable(this.table, true)

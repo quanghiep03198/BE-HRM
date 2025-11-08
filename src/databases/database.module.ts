@@ -11,8 +11,8 @@ import { DATA_SOURCE_SYSCLOUD, DATABASE_SYSCLOUD } from './constants'
 			inject: [ConfigService],
 			useFactory: (configService: ConfigService) => {
 				return {
-					database: DATABASE_SYSCLOUD,
-					...configService.get<TypeOrmModuleAsyncOptions>('typeorm')
+					...configService.get<TypeOrmModuleAsyncOptions>('typeorm'),
+					database: DATABASE_SYSCLOUD
 				}
 			}
 		})

@@ -1,0 +1,7 @@
+export * from './department.seeder'
+export * from './employee.seeder'
+export * from './permission.seeder'
+export * from './position.seeder'
+export * from './role-permission.seeder'
+export * from './user-role.seeder'
+export * from './user.seeder'
